@@ -15,13 +15,17 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
 
     public bool isGrounded;
-    public bool isWall;
     public Transform groundCheck;
     public float checkRadius;
-    public LayerMask groundLayer;
-    public LayerMask wallLayer;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask wallLayer;
     private int extraJumps;
     public int extraJumpsValue;
+
+    [Header("Wall Collision Variables")]
+    [SerializeField] private float _wallRaycastLength;
+    public bool _onWall;
+    public bool _onRightWall;
 
 
     // Start is called before the first frame update
@@ -36,6 +40,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        CheckCollisions();
         isGrounded = Physics2D.OverlapCircle(transform.position, checkRadius, groundLayer);
         //isWall = Physics2D.OverlapBox(transform.position, )
         moveInput = Input.GetAxis("Horizontal");
@@ -74,7 +79,52 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    void OnCollisionStay2D(Collision2D col) 
+    private void CheckCollisions()
+    {
+        /* //Ground Collisions
+        _onGround = Physics2D.Raycast(transform.position + _groundRaycastOffset, Vector2.down, _groundRaycastLength, _groundLayer) ||
+                    Physics2D.Raycast(transform.position - _groundRaycastOffset, Vector2.down, _groundRaycastLength, _groundLayer);
+
+        //Corner Collisions
+        _canCornerCorrect = Physics2D.Raycast(transform.position + _edgeRaycastOffset, Vector2.up, _topRaycastLength, _cornerCorrectLayer) &&
+                            !Physics2D.Raycast(transform.position + _innerRaycastOffset, Vector2.up, _topRaycastLength, _cornerCorrectLayer) ||
+                            Physics2D.Raycast(transform.position - _edgeRaycastOffset, Vector2.up, _topRaycastLength, _cornerCorrectLayer) &&
+                            !Physics2D.Raycast(transform.position - _innerRaycastOffset, Vector2.up, _topRaycastLength, _cornerCorrectLayer); */
+
+        //Wall Collisions
+        _onWall = Physics2D.Raycast(transform.position, Vector2.right, _wallRaycastLength, wallLayer) ||
+                    Physics2D.Raycast(transform.position, Vector2.left, _wallRaycastLength, wallLayer);
+        _onRightWall = Physics2D.Raycast(transform.position, Vector2.right, _wallRaycastLength, wallLayer);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+
+        /* //Ground Check
+        Gizmos.DrawLine(transform.position + _groundRaycastOffset, transform.position + _groundRaycastOffset + Vector3.down * _groundRaycastLength);
+        Gizmos.DrawLine(transform.position - _groundRaycastOffset, transform.position - _groundRaycastOffset + Vector3.down * _groundRaycastLength);
+
+        //Corner Check
+        Gizmos.DrawLine(transform.position + _edgeRaycastOffset, transform.position + _edgeRaycastOffset + Vector3.up * _topRaycastLength);
+        Gizmos.DrawLine(transform.position - _edgeRaycastOffset, transform.position - _edgeRaycastOffset + Vector3.up * _topRaycastLength);
+        Gizmos.DrawLine(transform.position + _innerRaycastOffset, transform.position + _innerRaycastOffset + Vector3.up * _topRaycastLength);
+        Gizmos.DrawLine(transform.position - _innerRaycastOffset, transform.position - _innerRaycastOffset + Vector3.up * _topRaycastLength);
+
+        //Corner Distance Check
+        Gizmos.DrawLine(transform.position - _innerRaycastOffset + Vector3.up * _topRaycastLength,
+                        transform.position - _innerRaycastOffset + Vector3.up * _topRaycastLength + Vector3.left * _topRaycastLength);
+        Gizmos.DrawLine(transform.position + _innerRaycastOffset + Vector3.up * _topRaycastLength,
+                        transform.position + _innerRaycastOffset + Vector3.up * _topRaycastLength + Vector3.right * _topRaycastLength);
+ */
+        //Wall Check
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.right * _wallRaycastLength);
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.left * _wallRaycastLength);
+    }
+
+
+
+/*     void OnCollisionStay2D(Collision2D col) 
     {   
         if (col.gameObject.layer == groundLayer) {
             Debug.Log("ground");
@@ -103,6 +153,6 @@ public class PlayerController : MonoBehaviour
             isWall = false;
             rb.gravityScale = 5;
         }
-    }
+    } */
 
 }
