@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int _extraJumps = 1;
     [SerializeField] private float _hangTime = .1f;
     [SerializeField] private float _jumpBufferLength = .1f;
+    [SerializeField] private AudioSource jumpSoundEffect;
     private int _extraJumpsValue;
     private float _hangTimeCounter;
     private float _jumpBufferCounter;
@@ -77,8 +78,10 @@ public class PlayerController : MonoBehaviour
         coinsText.text = "Coins: " + numberOfCoins;
         _horizontalDirection = GetInput().x;
         _verticalDirection = GetInput().y;
-        if (Input.GetButtonDown("Jump")) _jumpBufferCounter = _jumpBufferLength;
-        else _jumpBufferCounter -= Time.deltaTime;
+        if (Input.GetButtonDown("Jump")) {
+            jumpSoundEffect.Play();
+            _jumpBufferCounter = _jumpBufferLength;
+        }else _jumpBufferCounter -= Time.deltaTime;
         
 
     }

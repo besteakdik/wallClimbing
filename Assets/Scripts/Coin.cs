@@ -4,10 +4,14 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
+
+    [SerializeField] private AudioSource collectSoundEffect;
+
     private void OnTriggerEnter2D(Collider2D collision) {
-        if(collision.transform.tag == "Player"){
+        if(collision.gameObject.CompareTag("Coin")){
+            collectSoundEffect.Play(); 
+            Destroy(collision.gameObject); 
             PlayerController.numberOfCoins++;
-            Destroy(gameObject); 
         }
     }
 }
