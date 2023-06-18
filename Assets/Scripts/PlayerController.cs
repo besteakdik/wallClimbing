@@ -68,9 +68,16 @@ public class PlayerController : MonoBehaviour
     public static int numberOfCoins;
     public TextMeshProUGUI coinsText;
 
+    [Header("Respawn Variables")]
+    private Vector3 respawnPoint; //record position where the player start of in the game
+    public GameObject fallDetector;
+    [SerializeField] private AudioSource deathSoundEffect;
+
+
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+        respawnPoint = transform.position; 
     }
 
     private void Update()
@@ -83,7 +90,16 @@ public class PlayerController : MonoBehaviour
             _jumpBufferCounter = _jumpBufferLength;
         }else _jumpBufferCounter -= Time.deltaTime;
         
+        fallDetector.transform.position = new Vector2(transform.position.x, fallDetector.transform.position.y);
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision) {
+        if (collision.tag == "FallDetector") {
+            transform.position = respawnPoint;
+            deathSoundEffect.Play();
+
+        }
     }
 
     private void FixedUpdate()
